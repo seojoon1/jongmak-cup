@@ -11,7 +11,7 @@ export default function AuctionBidding() {
   } = useAuctionStore();
 
   const highBidderTeam = teams.find(t => t.id === highBidderId);
-  const [bidStep, setBidStep] = useState(10);
+  const [bidStep, setBidStep] = useState(100);
   const [showPlayerList, setShowPlayerList] = useState(false);
 
   if (!currentPlayer) return <div className="flex-1"></div>;
