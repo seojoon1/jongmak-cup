@@ -18,6 +18,7 @@ interface AuctionState {
   placeBid: (teamId: string, amount: number) => void;
   endAuction: (isSold: boolean) => void;
   confirmPosition: (finalPosition: string) => void;
+  grantSubsidy: (amount: number) => void; // [New] 지원금 함수
   tickTimer: () => void;
 }
 
@@ -119,18 +120,31 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
       return team;
     });
 
-    // [로직 추가] 모든 팀이 5명이면 게임 종료
     const isAllFull = newTeams.every(t => t.roster.length >= 5);
     const nextStatus = isAllFull ? 'FINISHED' : 'READY';
 
     set({
       teams: newTeams,
       waitingList: waitingList.slice(1),
-      status: nextStatus, // 종료 체크 반영
+      status: nextStatus,
       currentPlayer: null,
       highBidderId: null,
       currentBid: 0
     });
+  },
+
+  // [New] 지원금 지급 로직
+  grantSubsidy: (amount) => {
+    const { teams } = get();
+    const newTeams = teams.map(team => {
+        // 팀원이 5명 미만인 팀에게만 돈을 줍니다.
+        if (team.roster.length < 5) {
+            return { ...team, budget: team.budget + amount };
+        }
+        return team;
+    });
+    set({ teams: newTeams });
+    alert(`인원이 부족한 팀에게 지원금 ${amount}P가 지급되었습니다!`);
   },
 
   tickTimer: () => {

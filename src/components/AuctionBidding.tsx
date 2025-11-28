@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { useAuctionStore } from '../store/auctionStore';
-import { User, Timer, Gavel, XCircle, List } from 'lucide-react';
+import { User, Timer, Gavel, XCircle, List, Coins } from 'lucide-react';
 import PlayerListModal from './PlayerListModal';
 
 export default function AuctionBidding() {
   const { 
     currentPlayer, currentBid, highBidderId, 
-    currentTime, teams, waitingList,
-    placeBid, endAuction 
+    currentTime, teams,
+    placeBid, endAuction, grantSubsidy // grantSubsidy 추가
   } = useAuctionStore();
 
   const highBidderTeam = teams.find(t => t.id === highBidderId);
-  const [bidStep, setBidStep] = useState(100);
+  const [bidStep, setBidStep] = useState(10);
   const [showPlayerList, setShowPlayerList] = useState(false);
 
   if (!currentPlayer) return <div className="flex-1"></div>;
@@ -20,17 +20,18 @@ export default function AuctionBidding() {
     <div className="flex-1 bg-white rounded-3xl shadow-xl border border-slate-200 flex flex-col p-4 relative overflow-hidden h-full max-h-full">
       <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
 
-      {/* 목록 버튼 */}
+      {/* 목록 보기 버튼 */}
       <div className="absolute top-4 right-4 z-20">
         <button 
           onClick={() => setShowPlayerList(true)}
           className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors"
+          title="선수 명단"
         >
           <List size={20} />
         </button>
       </div>
 
-      {/* 프로필 */}
+      {/* 선수 프로필 */}
       <div className="flex flex-col items-center justify-center mt-2 mb-2 flex-shrink-0">
          <div className="relative mb-2">
             <div className="w-24 h-24 rounded-full bg-white border-4 border-slate-100 shadow-md flex items-center justify-center overflow-hidden">
@@ -81,7 +82,7 @@ export default function AuctionBidding() {
         </div>
       </div>
 
-      {/* 팀 리스트 */}
+      {/* 팀 리스트 (스크롤) */}
       <div className="flex-1 overflow-y-auto min-h-0 mb-3 pr-1 scrollbar-thin">
         <div className="grid grid-cols-2 gap-2">
             {teams.map(team => {
@@ -118,6 +119,7 @@ export default function AuctionBidding() {
                             {isFull ? 'FULL' : `+ ${bidStep}`}
                         </span>
                     </div>
+                    
                     <div className="text-right">
                         <div className={`text-[10px] font-mono font-medium px-1.5 rounded mb-0.5 ${canBid ? 'bg-black/20 text-white' : 'bg-slate-200 text-slate-500'}`}>
                         {team.budget}
@@ -129,26 +131,40 @@ export default function AuctionBidding() {
         </div>
       </div>
 
-      {/* 컨트롤 버튼 */}
-      <div className="flex gap-2 pt-3 border-t border-slate-100 flex-shrink-0">
+      {/* 하단 관리자 컨트롤 */}
+      <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 flex-shrink-0">
+        
+        {/* [New] 긴급 지원금 버튼 */}
         <button 
-            onClick={() => endAuction(false)}
-            className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors text-sm"
+            onClick={() => {
+                if(window.confirm('인원이 부족한 팀에게 200P를 지급하시겠습니까?')) {
+                    grantSubsidy(200);
+                }
+            }}
+            className="w-full py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold rounded-lg flex items-center justify-center gap-2 transition-colors text-xs"
         >
-            <XCircle size={18} /> 유찰
+            <Coins size={14} /> 미완성 팀 지원금 지급 (+200P)
         </button>
-        <button 
-            onClick={() => endAuction(true)}
-            disabled={!highBidderId}
-            className="flex-[2] py-3 bg-slate-900 hover:bg-black text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-transform active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed text-sm"
-        >
-            <Gavel size={18} /> 낙찰 확정
-        </button>
+
+        <div className="flex gap-2">
+            <button 
+                onClick={() => endAuction(false)}
+                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors text-sm"
+            >
+                <XCircle size={18} /> 유찰
+            </button>
+            <button 
+                onClick={() => endAuction(true)}
+                disabled={!highBidderId}
+                className="flex-[2] py-3 bg-slate-900 hover:bg-black text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-transform active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed text-sm"
+            >
+                <Gavel size={18} /> 낙찰 확정
+            </button>
+        </div>
       </div>
 
       {showPlayerList && (
         <PlayerListModal 
-            waitingList={waitingList} 
             onClose={() => setShowPlayerList(false)} 
         />
       )}
