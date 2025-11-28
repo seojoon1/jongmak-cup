@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuctionStore } from '../store/auctionStore';
 import { User, Timer, Gavel, XCircle, List } from 'lucide-react';
 import PlayerListModal from './PlayerListModal';

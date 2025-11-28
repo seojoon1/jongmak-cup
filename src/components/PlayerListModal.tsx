@@ -1,4 +1,4 @@
-    import React, { useState } from 'react';
+    import { useState } from 'react';
 import { List, Search, X } from 'lucide-react';
 import type { Player } from '../types';
 

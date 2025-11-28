@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Trophy, Download } from 'lucide-react';
 import { useAuctionStore } from '../store/auctionStore';
 

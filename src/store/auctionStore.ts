@@ -81,7 +81,7 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
   },
 
   endAuction: (isSold) => {
-    const { highBidderId, currentBid, currentPlayer, waitingList } = get();
+    const { highBidderId,currentPlayer, waitingList } = get();
     if (!currentPlayer) return;
 
     if (!isSold || !highBidderId) {
