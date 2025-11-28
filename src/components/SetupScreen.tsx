@@ -85,7 +85,7 @@ export default function SetupScreen() {
             {/* 2. 팀장 선택 */}
             <div className="bg-gray-800/50 p-6 rounded-2xl border border-gray-700 h-[500px] flex flex-col">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-green-400">
-                <Users size={20}/> 2. Select Captains ({selectedCaptains.length}/{maxTeams})
+                <Users size={20}/> 2. 팀장 선택 ({selectedCaptains.length}/{maxTeams})
               </h2>
               <div className="flex-1 overflow-y-auto pr-2 grid grid-cols-1 gap-2 content-start">
                 {players.map(p => {
@@ -147,7 +147,7 @@ export default function SetupScreen() {
             {/* 3. 옵션 및 시작 */}
             <div className="flex flex-col gap-6">
               <div className="bg-gray-800/50 p-6 rounded-2xl border border-gray-700">
-                <h2 className="text-xl font-bold mb-4">3. Options</h2>
+                <h2 className="text-xl font-bold mb-4">3. 설정</h2>
                 <div>
                   <label className="block text-sm text-gray-400 mb-2">경매 시간 (초)</label>
                   <input 
