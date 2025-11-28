@@ -13,7 +13,6 @@ interface AuctionState {
   currentTime: number;
   
   setPlayers: (players: Player[]) => void;
-  // [핵심 수정] setupTeams가 인자 3개를 받습니다.
   setupTeams: (captainIds: string[], captainPositions: Record<string, string>, timerSeconds: number) => void;
   startAuction: () => void;
   placeBid: (teamId: string, amount: number) => void;
@@ -41,8 +40,6 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
     const { players } = get();
     const newTeams: Team[] = captainIds.map((capId, idx) => {
       const captain = players.find(p => p.id === capId)!;
-      
-      // 전달받은 포지션이 있으면 쓰고, 없으면 원래 포지션의 첫 번째 것 사용
       const finalPosition = captainPositions[capId] || captain.position.split(/[\/, ]+/)[0];
 
       return {
@@ -84,7 +81,7 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
   },
 
   endAuction: (isSold) => {
-    const { highBidderId, currentPlayer, waitingList } = get();
+    const { highBidderId, currentBid, currentPlayer, waitingList } = get();
     if (!currentPlayer) return;
 
     if (!isSold || !highBidderId) {
@@ -98,7 +95,6 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
       return;
     }
 
-    // 포지션 분리 로직 (공백, 쉼표, 슬래시 모두 처리)
     const positions = currentPlayer.position.split(/[\/, ]+/).filter(p => p.trim() !== '');
     
     if (positions.length > 1) {
@@ -123,10 +119,14 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
       return team;
     });
 
+    // [로직 추가] 모든 팀이 5명이면 게임 종료
+    const isAllFull = newTeams.every(t => t.roster.length >= 5);
+    const nextStatus = isAllFull ? 'FINISHED' : 'READY';
+
     set({
       teams: newTeams,
       waitingList: waitingList.slice(1),
-      status: 'READY',
+      status: nextStatus, // 종료 체크 반영
       currentPlayer: null,
       highBidderId: null,
       currentBid: 0
