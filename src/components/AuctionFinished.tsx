@@ -1,12 +1,30 @@
-
+import {useRef} from 'react';
 import { Trophy, Download } from 'lucide-react';
 import { useAuctionStore } from '../store/auctionStore';
+import {toPng} from 'html-to-image';
 
 export default function AuctionFinished() {
-  const { teams } = useAuctionStore();
+    const { teams } = useAuctionStore();
+    const captureRef = useRef<HTMLDivElement>(null);
 
-  return (
-    <div className="flex-1 bg-white rounded-3xl shadow-xl border border-slate-200 flex flex-col items-center justify-center p-10 text-center relative overflow-hidden">
+    const handleCapture = async () => {
+        if (!captureRef.current) return;
+        try{
+            const dataUrl = await toPng(captureRef.current, {backgroundColor: "ffffff"});
+
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = `auction_results_${new Date().getTime()}.png`;
+            link.click();
+    }
+        catch (error) {
+            console.error('이미지 저장 실패:', error);
+        }
+    };
+    return (
+    <div 
+    ref ={captureRef}
+    className="flex-1 bg-white rounded-3xl shadow-xl border border-slate-200 flex flex-col items-center justify-center p-10 text-center relative overflow-hidden">
         {/* 폭죽 효과 배경 */}
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-indigo-50/50 to-white pointer-events-none"></div>
@@ -38,12 +56,13 @@ export default function AuctionFinished() {
             </div>
 
             <button 
-                onClick={() => window.print()}
+                onClick={handleCapture}
+                data-html2canvas-ignore="true"
                 className="mt-8 px-8 py-3 bg-slate-900 hover:bg-black text-white font-bold rounded-xl flex items-center gap-2 transition-transform active:scale-95"
             >
-                <Download size={20} /> 결과 저장 (PDF 인쇄)
+                <Download size={20} /> 결과 저장 (이미지 저장)
             </button>
         </div>
     </div>
-  );
+    );
 }

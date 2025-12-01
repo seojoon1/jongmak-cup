@@ -4,9 +4,8 @@ import SetupScreen from './components/SetupScreen';
 import TeamPanel from './components/TeamPanel';
 import AuctionStage from './components/AuctionStage';
 import { Trophy } from 'lucide-react';
-
 export default function App() {
-  const { status, teams, tickTimer } = useAuctionStore();
+  const { status, teams, tickTimer, resetAuction } = useAuctionStore();
 
   useEffect(() => {
     const interval = setInterval(() => tickTimer(), 1000);
@@ -38,7 +37,7 @@ export default function App() {
         <header className="h-16 flex items-center justify-between px-8 mb-4 bg-white rounded-2xl shadow-sm border border-slate-200">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
-                <Trophy size={20} />
+                <Trophy size={20} onClick={resetAuction}/>
               </div>
               <div>
                 <h1 className="text-xl font-black text-slate-800 tracking-tight">2025 종막컵</h1>

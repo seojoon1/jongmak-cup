@@ -20,6 +20,7 @@ interface AuctionState {
   confirmPosition: (finalPosition: string) => void;
   grantSubsidy: (amount: number) => void; // [New] 지원금 함수
   tickTimer: () => void;
+  resetAuction: () => void;
 }
 
 const TEAM_COLORS = ['cyan', 'pink', 'emerald', 'amber'] as const;
@@ -156,5 +157,22 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
     } else {
       endAuction(!!highBidderId);
     }
-  }
-}));
+  },resetAuction: () =>set((state)=>({
+    status:'SETUP',
+    teams: state.teams.map(team=>({
+      ...team,
+      budget:1000,
+      roster:[]
+  })),
+
+  players: state.players.map(player=>({
+    ...player,
+    teamId: null,
+    isSold: false
+  })),
+  currentBid:0,
+  highBidderId: null,
+  currentTime: state.timerSetting,
+  
+  
+}))}));
