@@ -37,7 +37,7 @@ export default function AuctionBidding() {
             <div className="w-24 h-24 rounded-full bg-white border-4 border-slate-100 shadow-md flex items-center justify-center overflow-hidden">
                <User size={48} className="text-slate-300" />
             </div>
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-slate-800 rounded-full text-xs font-bold text-white shadow border border-white">
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-slate-800 rounded-full text-xs font-bold text-white shadow border border-white whitespace-nowrap">
               {currentPlayer.position}
             </div>
          </div>
@@ -87,8 +87,8 @@ export default function AuctionBidding() {
         <div className="grid grid-cols-2 gap-2">
             {teams.map(team => {
             const isFull = team.roster.length >= 5;
-            const canBid = !isFull && team.budget >= currentBid + bidStep;
             const isHighBidder = team.id === highBidderId;
+            const canBid = !isFull && team.budget >= currentBid + bidStep && !isHighBidder;
             
             const btnStyles: Record<string, string> = {
                 cyan: 'bg-blue-600 hover:bg-blue-700 ring-blue-200',
@@ -108,7 +108,7 @@ export default function AuctionBidding() {
                     ${canBid 
                         ? `${btnStyles[team.colorTheme]} text-white` 
                         : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'}
-                    ${isHighBidder ? 'ring-2 ring-offset-1' : ''}
+                    ${isHighBidder ? 'ring-2 ring-offset-1 opacity-60 grayscale' : ''}
                     `}
                 >
                     <div className="flex flex-col items-start truncate">

@@ -71,7 +71,8 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
   },
 
   placeBid: (teamId, amount) => {
-    const { teams, timerSetting } = get();
+    const { teams, timerSetting,highBidderId } = get();
+    if (highBidderId === teamId) return;
     const team = teams.find(t => t.id === teamId);
     if (!team || team.roster.length >= 5 || team.budget < amount) return;
 
@@ -173,6 +174,6 @@ export const useAuctionStore = create<AuctionState>((set, get) => ({
   currentBid:0,
   highBidderId: null,
   currentTime: state.timerSetting,
-  
+
   
 }))}));
