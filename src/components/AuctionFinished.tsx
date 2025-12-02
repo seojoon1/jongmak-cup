@@ -1,11 +1,13 @@
-import {useRef} from 'react';
-import { Trophy, Download } from 'lucide-react';
+import {useRef, useState} from 'react';
+import { Trophy, Download, Swords, } from 'lucide-react';
 import { useAuctionStore } from '../store/auctionStore';
 import {toPng} from 'html-to-image';
+import BracketModal from './BracetModal';
 
 export default function AuctionFinished() {
     const { teams } = useAuctionStore();
     const captureRef = useRef<HTMLDivElement>(null);
+    const [showBraket, setShowBracket] = useState(false);
 
     const handleCapture = async () => {
         if (!captureRef.current) return;
@@ -47,7 +49,7 @@ export default function AuctionFinished() {
                         <div className="space-y-1">
                             {team.roster.map(p => (
                                 <div key={p.id} className="text-sm text-slate-600 flex justify-between">
-                                    <span>{p.name} ({p.position})</span>
+                                    <span>{p.name} ({p.position},{p.tier})</span>
                                 </div>
                             ))}
                         </div>
@@ -62,7 +64,23 @@ export default function AuctionFinished() {
             >
                 <Download size={20} /> 결과 저장 (이미지 저장)
             </button>
+            <button 
+                onClick={()=>setShowBracket(true)}
+                disabled={teams.length < 3}
+                data-html2canvas-ignore="true"
+                className={`
+                px-6 py-3 font-bold rounded-xl flex items-center gap-2 transition-all
+                ${teams.length >= 3
+                ? 'bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 shadow-lg shadow-indigo-200' // [활성] 보라색 + 그림자 + 클릭 효과
+                : 'bg-slate-200 text-slate-400 cursor-not-allowed' // [비활성] 회색 배경 + 흐린 글씨 + 금지 커서
+                }
+                `}                
+            >
+                <Swords size={20} /> 대진표 생성
+            </button>
+
         </div>
+        {showBraket && <BracketModal teams={teams} onClose={() => setShowBracket(false)} />}
     </div>
     );
 }
