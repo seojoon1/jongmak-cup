@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useAuctionStore } from '../store/auctionStore';
 import { User, Timer, Gavel, XCircle, List, Coins } from 'lucide-react';
 import PlayerListModal from './PlayerListModal';
-
+import ToEng from './ToEng.tsx';
+import type { ChampionKoreanName } from './ToEng.ts';
 export default function AuctionBidding() {
   const { 
     currentPlayer, currentBid, highBidderId, 
@@ -13,6 +14,11 @@ export default function AuctionBidding() {
   const highBidderTeam = teams.find(t => t.id === highBidderId);
   const [bidStep, setBidStep] = useState(100);
   const [showPlayerList, setShowPlayerList] = useState(false);
+  const getChampionBG = (championName: string) => {
+    const formattedName = ToEng[championName as ChampionKoreanName];
+
+    return `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${formattedName}_0.jpg`;
+  };
 
   if (!currentPlayer) return <div className="flex-1"></div>;
 
@@ -35,7 +41,16 @@ export default function AuctionBidding() {
       <div className="flex flex-col items-center justify-center mt-2 mb-2 flex-shrink-0">
          <div className="relative mb-2">
             <div className="w-24 h-24 rounded-full bg-white border-4 border-slate-100 shadow-md flex items-center justify-center overflow-hidden">
-               <User size={48} className="text-slate-300" />
+              {
+              currentPlayer.mostChampions ? <div className="w-full h-full"
+                style={{
+                  backgroundImage: `url(${getChampionBG(currentPlayer.mostChampions)})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }
+              } ></div> :
+                  <User size={48} className="text-slate-300" />
+              }
             </div>
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-slate-800 rounded-full text-xs font-bold text-white shadow border border-white whitespace-nowrap">
               {currentPlayer.position}

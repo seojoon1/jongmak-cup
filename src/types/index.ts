@@ -6,6 +6,7 @@ export interface Player {
     name: string;
     tier: string;
     position: Position;
+    mostChampions: string
     cost?: number; // 낙찰가
 }
 

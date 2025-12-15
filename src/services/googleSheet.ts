@@ -40,6 +40,8 @@ export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]>
 
             // 4. 티어 (티어 or Tier)
             const tier = row['티어'] || row['Tier'] || row['tier'] || 'Unranked';
+            //5. 주챔
+            const mostChampions = row['주챔'] || row['mostChampions'] || row['MostChampions'] || '';
 
             return {
               id: `p-${index}`,
@@ -47,6 +49,7 @@ export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]>
               ingameName: ingameName,
               position: position,
               tier: tier,
+              mostChampions: mostChampions
             };
           });
           resolve(players);
