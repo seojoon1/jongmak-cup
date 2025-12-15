@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAuctionStore } from './store/auctionStore';
 import SetupScreen from './components/SetupScreen';
-import TeamPanel from './components/TeamPanel';
+// import TeamPanel from './components/TeamPanel';
 import AuctionStage from './components/AuctionStage';
 import { Trophy } from 'lucide-react';
 export default function App() {
@@ -16,21 +16,21 @@ export default function App() {
     return <SetupScreen />;
   }
 
-  const half = Math.ceil(teams.length / 2);
-  const leftTeams = teams.slice(0, half);
-  const rightTeams = teams.slice(half);
+  // const half = Math.ceil(teams.length / 2);
+  // const leftTeams = teams.slice(0, half);
+  // const rightTeams = teams.slice(half);
 
   return (
     <div className="h-screen bg-slate-50 text-slate-900 flex overflow-hidden p-6 gap-6 font-sans">
       
       {/* Left Column */}
-      <div className="w-[340px] flex flex-col gap-6 z-10">
+      {/* <div className="w-[340px] flex flex-col gap-6 z-10">
         {leftTeams.map(team => (
           <div key={team.id} className="flex-1 min-h-0 drop-shadow-sm">
              <TeamPanel team={team} />
           </div>
         ))}
-      </div>
+      </div> */}
 
       {/* Center Stage */}
       <main className="flex-1 flex flex-col z-10 min-w-0">
@@ -54,13 +54,13 @@ export default function App() {
       </main>
 
       {/* Right Column */}
-      <div className="w-[340px] flex flex-col gap-6 z-10">
+      {/* <div className="w-[340px] flex flex-col gap-6 z-10">
          {rightTeams.map(team => (
           <div key={team.id} className="flex-1 min-h-0 drop-shadow-sm">
              <TeamPanel team={team} />
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

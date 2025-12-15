@@ -11,7 +11,7 @@ export default function SetupScreen() {
   const [captainPositions, setCaptainPositions] = useState<Record<string, string>>({});
   const [timer, setTimer] = useState(30);
 
-  const maxTeams = Math.min(4, Math.floor(players.length / 5));
+  const maxTeams = Math.min(Math.floor(players.length / 5));
 
   const handleLoadSheet = async () => {
     if (!sheetUrl) return;
@@ -82,7 +82,7 @@ export default function SetupScreen() {
         </div>
 
         {players.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
             {/* 2. 팀장 선택 */}
             <div className="bg-gray-800/50 p-6 rounded-2xl border border-gray-700 h-[500px] flex flex-col">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-green-400">
