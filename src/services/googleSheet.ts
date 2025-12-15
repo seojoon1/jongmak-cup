@@ -3,6 +3,7 @@ import type { Player } from '../types';
 
 export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]> => {
   try {
+    console.log("Fetching sheet with updated logic...");
     let csvUrl = sheetUrl;
 
     if (sheetUrl.includes('output=csv') || sheetUrl.includes('format=csv')) {
@@ -10,7 +11,10 @@ export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]>
     } else if (sheetUrl.includes('/edit')) {
       const match = sheetUrl.match(/\/d\/(.*?)(\/|$)/);
       if (match) {
-        csvUrl = `https://docs.google.com/spreadsheets/d/${match[1]}/export?format=csv`;
+        // gid가 있는 경우 유지하도록 처리 (선택적)
+        const gidMatch = sheetUrl.match(/gid=(\d+)/);
+        const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : '';
+        csvUrl = `https://docs.google.com/spreadsheets/d/${match[1]}/export?format=csv${gidParam}`;
       }
     } else if (sheetUrl.includes('/pubhtml')) {
         csvUrl = sheetUrl.replace('/pubhtml', '/pub?output=csv');
@@ -22,36 +26,79 @@ export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]>
 
     return new Promise((resolve, reject) => {
       Papa.parse(csvText, {
-        header: true,
+        header: false, // 헤더 위치를 모르므로 false로 설정하여 전체를 배열로 받음
         skipEmptyLines: true,
         complete: (results) => {
-          const players: Player[] = results.data.map((row: any, index) => {
-            // 1. 닉네임 (Name or 닉네임)
-            const name = row['닉네임'] || row['Name'] || row['name'] || 'Unknown';
-            
-            // 2. 롤 계정 (롤 계정 or IngameName or Name)
-            // * 팁: 시트의 '롤 계정' 헤더를 정확히 찾습니다.
-            const ingameName = row['롤 계정'] || row['롤계정'] || row['IngameName'] || row['Ign'] || name;
-            
-            // 3. 포지션 (포지션 or Position)
-            // * 팁: 시트에서 "SUP ADC" 처럼 공백으로 된 것도 그대로 가져옵니다.
-            let positionRaw = row['포지션'] || row['Position'] || row['position'] || 'MID';
-            const position = positionRaw.toUpperCase();
+          const rows = results.data as string[][];
+          
+          // 1. 헤더 행 찾기 ("닉네임" 또는 "Name"이 포함된 행)
+          const headerRowIndex = rows.findIndex(row => 
+            row.some(cell => cell && (cell.includes('닉네임') || cell.includes('Name')))
+          );
 
-            // 4. 티어 (티어 or Tier)
-            const tier = row['티어'] || row['Tier'] || row['tier'] || 'Unranked';
-            //5. 주챔
-            const mostChampions = row['주챔'] || row['mostChampions'] || row['MostChampions'] || '';
+          if (headerRowIndex === -1) {
+            console.error("Header row not found (닉네임/Name 컬럼을 찾을 수 없습니다)");
+            resolve([]); 
+            return;
+          }
 
-            return {
-              id: `p-${index}`,
-              name: name,
-              ingameName: ingameName,
-              position: position,
-              tier: tier,
+          const headerRow = rows[headerRowIndex];
+          
+          // 2. 컬럼 인덱스 매핑
+          const getColIndex = (keywords: string[]) => 
+            headerRow.findIndex(cell => 
+              cell && keywords.some(k => cell.includes(k))
+            );
+
+          const idxName = getColIndex(['닉네임', 'Name', 'name']);
+          const idxIngame = getColIndex(['롤 계정', '롤계정', 'IngameName', 'Ign']);
+          const idxPos = getColIndex(['포지션', 'Position', 'position']);
+          const idxTier = getColIndex(['티어', 'Tier', 'tier']);
+          const idxMost = getColIndex(['주챔', '모스트', 'Most']);
+
+          // 3. 데이터 추출 (헤더 다음 행부터 시작)
+          const players: Player[] = [];
+          
+          for (let i = headerRowIndex + 1; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || row.length === 0) continue;
+
+            // 필수 값인 닉네임이 없으면 스킵
+            const name = idxName !== -1 ? row[idxName] : '';
+            if (!name || name.trim() === '') continue;
+
+            const ingameName = idxIngame !== -1 ? row[idxIngame] : name;
+            let positionRaw = idxPos !== -1 ? row[idxPos] : 'MID';
+            const tier = idxTier !== -1 ? row[idxTier] : 'Unranked';
+            
+            // 5. 주챔 처리 (확실하게 첫 번째 것만 가져오기)
+            const mostRaw = idxMost !== -1 ? row[idxMost] : '';
+            let mostChampions = mostRaw;
+
+            if (mostChampions) {
+                // 1. 콤마(,)가 있으면 앞부분만 취함
+                if (mostChampions.includes(',')) {
+                    mostChampions = mostChampions.split(',')[0];
+                }
+                // 2. 슬래시(/)가 있으면 앞부분만 취함
+                if (mostChampions.includes('/')) {
+                    mostChampions = mostChampions.split('/')[0];
+                }
+                // 3. 공백 제거
+                mostChampions = mostChampions.trim();
+            }
+
+            players.push({
+              id: `p-${i}`,
+              name: name.trim(),
+              ingameName: ingameName.trim(),
+              position: positionRaw.toUpperCase().trim(),
+              tier: tier.trim(),
               mostChampions: mostChampions
-            };
-          });
+            });
+          }
+
+          console.log(`Parsed ${players.length} players from row ${headerRowIndex + 1}`);
           resolve(players);
         },
         error: (err: any) => reject(err),
