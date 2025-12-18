@@ -55,6 +55,7 @@ export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]>
           const idxPos = getColIndex(['포지션', 'Position', 'position']);
           const idxTier = getColIndex(['티어', 'Tier', 'tier']);
           const idxMost = getColIndex(['주챔', '모스트', 'Most']);
+          const idxNotes = getColIndex(['비고', 'Notes', 'notes']);
 
           // 3. 데이터 추출 (헤더 다음 행부터 시작)
           const players: Player[] = [];
@@ -72,6 +73,7 @@ export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]>
             const tier = idxTier !== -1 ? row[idxTier] : 'Unranked';
             
             // 5. 주챔 처리 (확실하게 첫 번째 것만 가져오기)
+            const mostAllChampions = idxMost !== -1 ? row[idxMost] : '';
             const mostRaw = idxMost !== -1 ? row[idxMost] : '';
             let mostChampions = mostRaw;
 
@@ -87,6 +89,7 @@ export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]>
                 // 3. 공백 제거
                 mostChampions = mostChampions.trim();
             }
+            const notes = idxNotes !== -1 ? row[idxNotes] : '';
 
             players.push({
               id: `p-${i}`,
@@ -94,7 +97,9 @@ export const fetchPlayersFromSheet = async (sheetUrl: string): Promise<Player[]>
               ingameName: ingameName.trim(),
               position: positionRaw.toUpperCase().trim(),
               tier: tier.trim(),
-              mostChampions: mostChampions
+              mostChampions: mostChampions,
+              notes: notes.trim(),
+              mostAllChampions: mostAllChampions.trim(),
             });
           }
 

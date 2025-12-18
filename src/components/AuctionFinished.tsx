@@ -1,5 +1,6 @@
 import {useRef, useState} from 'react';
-import { Trophy, Download, Swords, } from 'lucide-react';
+import { // Trophy, 
+    Download, Swords, } from 'lucide-react';
 import { useAuctionStore } from '../store/auctionStore';
 import {toPng} from 'html-to-image';
 import BracketModal from './BracetModal';
@@ -32,9 +33,9 @@ export default function AuctionFinished() {
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-indigo-50/50 to-white pointer-events-none"></div>
 
         <div className="relative z-10 flex flex-col items-center">
-            <div className="w-28 h-28 bg-yellow-400 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-yellow-200 animate-bounce">
+            {/* <div className="w-28 h-28 bg-yellow-400 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-yellow-200 animate-bounce">
                 <Trophy size={56} className="text-white drop-shadow-md" />
-            </div>
+            </div> */}
             
             <h1 className="text-4xl font-black text-slate-800 mb-2">AUCTION COMPLETE!</h1>
             <p className="text-xl text-slate-500 mb-8">모든 팀의 로스터 구성이 완료되었습니다.</p>

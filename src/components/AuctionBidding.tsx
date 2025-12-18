@@ -46,8 +46,10 @@ export default function AuctionBidding() {
         
         {/* 1. 선수 프로필 */}
         <div className="flex flex-col items-center">
-            <div className="relative mb-3">
-                <div className="w-24 h-24 rounded-full bg-white border-4 border-slate-100 shadow-md flex items-center justify-center overflow-hidden">
+            <div className="relative mb-3 group">
+                <div className="w-24 h-24 rounded-full bg-white border-4 border-slate-100 shadow-md flex items-center justify-center overflow-hidden"
+                aria-describedby="player-profile-tooltip"
+                >
                     {currentPlayer.mostChampions ? (
                         <div className="w-full h-full bg-cover bg-center"
                             style={{ backgroundImage: `url(${getChampionBG(currentPlayer.mostChampions)})` }} 
@@ -59,11 +61,23 @@ export default function AuctionBidding() {
                 <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-slate-800 rounded-full text-xs font-bold text-white shadow border border-white whitespace-nowrap">
                     {currentPlayer.position}
                 </div>
+            <div
+                id="player-profile-tooltip"
+                role="tooltip"
+                className="
+                pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-full
+                px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold whitespace-nowrap
+                opacity-0 group-hover:opacity-100 transition-opacity duration-150
+                "
+            >
+                {currentPlayer.notes || '선수에 대한 추가 정보가 없습니다.'}
+            </div>
             </div>
             <h1 className="text-2xl font-black text-slate-900 mb-1">{currentPlayer.name}</h1>
             <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-400 border px-2 py-0.5 rounded">{currentPlayer.tier}</span>
                 <span className="text-xs text-slate-500 font-mono">{currentPlayer.ingameName}</span>
+                <span className="text-xs text-slate-500 font-mono">{currentPlayer.mostAllChampions}</span>
             </div>
         </div>
 

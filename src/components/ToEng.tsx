@@ -36,7 +36,7 @@ const ToEng = {
     "리븐": "Riven",
     "리산드라": "Lissandra",
     "릴리아": "Lillia",
-    "마스터 이": "MasterYi",
+    "마스터 이" : "MasterYi",
     "마오카이": "Maokai",
     "말자하": "Malzahar",
     "말파이트": "Malphite",
