@@ -40,8 +40,8 @@ export default function App() {
                 <Trophy size={20} onClick={resetAuction}/>
               </div>
               <div>
-                <h1 className="text-xl font-black text-slate-800 tracking-tight">2025 종막컵</h1>
-                <span className="text-xs text-slate-500 font-medium tracking-widest">JONGMAK CUP AUCTION</span>
+                <h1 className="text-xl font-black text-slate-800 tracking-tight">2025 내전컵</h1>
+                <span className="text-xs text-slate-500 font-medium tracking-widest">Civilwar CUP AUCTION</span>
               </div>
             </div>
             

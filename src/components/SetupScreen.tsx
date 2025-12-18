@@ -54,7 +54,7 @@ export default function SetupScreen() {
         
         <header className="text-center space-y-2">
           <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-            JONGMAK CUP SETUP
+            Civil war CUP SETUP
           </h1>
           <a href="https://www.notion.so/2bc4a41f5933809fbcc6f5d6f3504eae?source=copy_link" className='text-gray-400' target='_blank'> -사용 설명서-</a>
           <p className="text-gray-400">구글 시트 연동 및 팀장 설정을 진행해주세요.</p>
